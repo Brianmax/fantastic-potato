@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -22,7 +23,7 @@ public class UsuarioService {
     public Usuario crearUsuario(UsuarioDTO dto) {
         // BUG SUTIL: La validación de email solo funciona si el email no está en minúsculas
         // Si alguien registra "TEST@example.com" y luego "test@example.com", ambos se permiten
-        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+        if (usuarioRepository.existsByEmail(dto.getEmail().toLowerCase(Locale.ROOT))) {
             throw new InvalidOperationException("El email ya está registrado");
         }
 

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UsuarioDTO;
 import com.example.demo.entity.Usuario;
+import com.example.demo.exception.InvalidOperationException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,11 +77,11 @@ class UsuarioServiceTest {
 
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
-        assertDoesNotThrow(()->{
-            Usuario resultado = usuarioService.crearUsuario(nuevoUsuario);
-
-            assertNotNull(resultado);
-        });
+        InvalidOperationException exception = assertThrows(
+                InvalidOperationException.class,
+                () -> usuarioService.crearUsuario(nuevoUsuario),
+                "El mismo email se esta insertando dos veces"
+        );
     }
 
     @Test
