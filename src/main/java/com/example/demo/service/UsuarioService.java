@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,11 @@ public class UsuarioService {
     }
 
     public Usuario obtenerUsuario(Long id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if(usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        return usuario.get();
     }
 
     public List<Usuario> obtenerTodos() {

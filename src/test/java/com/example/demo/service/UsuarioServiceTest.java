@@ -2,12 +2,15 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UsuarioDTO;
 import com.example.demo.entity.Usuario;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -82,6 +85,26 @@ class UsuarioServiceTest {
 
     @Test
     void obtenerUsuario() {
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+
+        Usuario resultado = usuarioService.obtenerUsuario(1L);
+
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getId());
+    }
+
+    @Test
+    void obtenerUsuarioException() {
+        // arrange
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // act y assert
+
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> usuarioService.obtenerUsuario(99L),
+                "Se debe de lanzar una exception de tipo ResourceNotFoundException"
+        );
     }
 
     @Test
@@ -90,6 +113,13 @@ class UsuarioServiceTest {
 
     @Test
     void desactivarUsuario() {
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        usuarioService.desactivarUsuario(1L);
+
+        assertFalse(usuario.getActivo());
+
     }
 
     @Test
